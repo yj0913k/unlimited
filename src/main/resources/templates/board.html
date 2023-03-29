@@ -27,34 +27,32 @@
         <button>게시글 작성</button>
     </form>
 
-    <form action="/bno" method="post">
+    <form action="/*{id}" method="post">
 
 
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>No</th>
-            <th>Writer</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="board : ${board}">
-            <td th:text="${board?.bno} ?: '-'">글번호</td>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>No</th>
+                <th>제목</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="board : ${board}">
+                <td th:text="${board.id}">글번호</td>
 
-            <td><a th:text="${board?.title} ?: '제목 없음'"th:href="@{/{bno}(bno=${board?.bno})}">제목</a></td>
-        </tr>
+                <td><a th:text="${board?.title} ?: '제목 없음'" th:href="@{/{id}(id=${board?.id})}">제목</a></td>
+            </tr>
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
     </form>
     <nav>
-        <ul class="pagination justify-content-center">
-            <li class="page-item"><a class="page-link" href="">이전</a></li>
-            <li class="page-item"><a class="page-link" href="">1</a></li>
-            <li class="page-item"><a class="page-link" href="">2</a></li>
-            <li class="page-item"><a class="page-link" href="">3</a></li>
-            <li class="page-item"><a class="page-link" href="">다음</a></li>
-        </ul>
+        <div class="pagination justify-content-center">
+            <span th:each="pageNum : ${pageList}" th:inline="text" class="page-item">
+                <a th:href="@{'/page/' + ${pageNum}}">[[${pageNum}]]</a>
+            </span>
+        </div>
     </nav>
 </div>
 </body>

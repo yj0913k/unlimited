@@ -6,11 +6,11 @@ import lombok.Data;
 @Data
 public class BoardListForm {
 
-//    @NotNull
-    private Long bno;
-//    @NotNull
+    @NotNull
+    private Long id;
+    @NotNull
     private String title;
 
-//    @NotNull
+    @NotNull
     private String content;
 }

@@ -6,10 +6,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -19,13 +20,19 @@ public class BoardController {
     @Autowired
     BoardRepository boardRepository;
 
+    @Autowired
+    BoardService boardService;
+
     /*
     게시글 상세페이지 이동
  */
-    @GetMapping("/{bno}")
-    public String boardView(@PathVariable Long bno, BindingResult bindingResult) {
+    @GetMapping("/{id}")
+    public String boardView(@Validated @PathVariable("id") Long id,Model model) {
+        BoardDTO boardDTO = boardService.detail(id);
 
-        return "boardRegister";
+        model.addAttribute("board", boardDTO);
+
+        return "boardView";
     }
 
 
@@ -33,23 +40,45 @@ public class BoardController {
     게시판으로 이동
      */
     @PostMapping("/board")
-    public String board(@Validated @ModelAttribute BoardListForm form, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            log.info("errors={}", "에러");
-        }
-        model.addAttribute("board", form);
+    public String board(@Validated @ModelAttribute Board board, BindingResult bindingResult, Model model,
+                        @RequestParam(value = "page", defaultValue = "1") int pageNum) {
+
+//        if (bindingResult.hasErrors()) {
+//            log.info("errors={}", "에러");
+//        }
+
+        Integer[] pageList = boardService.getPageList(pageNum);
+        model.addAttribute("pageList", pageList);
+
+
+        List<BoardDTO> boardList = boardService.getBoardlist(1);
+
+        model.addAttribute("board", boardList);
+
         return "board";
     }
 
+    /*
+    페이징
+     */
+    @GetMapping("/page/{pageNum})")
+    public String list (@Validated @ModelAttribute Board board, Model model,  @RequestParam(value = "page", defaultValue = "1") int pageNum){
+        Integer[] pageList = boardService.getPageList(pageNum);
+
+        List<BoardDTO> boardList = boardService.getBoardlist(pageNum);
+        model.addAttribute("pageList", pageList);
+        model.addAttribute("board", boardList);
 
 
-
+        return "board";
+    }
 
     /*
     게시글 작성 이동
      */
     @GetMapping("/board/register")
-    public String boardRegister(){
+    public String boardRegister() {
+
         return "boardRegister";
     }
 
@@ -65,10 +94,19 @@ public class BoardController {
         board.setParentNum(0L);
         board.setChildNum(0L);
 
-
         boardRepository.save(board);
 
 
-        return "board";
+
+        return "redirect:/";
     }
+
+
+    @DeleteMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Long id) {
+
+        boardService.deleteById(id);
+        return "redirect:/";
+    }
+
 }

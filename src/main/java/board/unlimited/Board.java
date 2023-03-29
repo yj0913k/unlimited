@@ -17,9 +17,6 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Generated
-    private Long bno;
 
     @NotNull
     private String title;
@@ -29,7 +26,7 @@ public class Board {
 
     //부모글의 주소. 자신이 부모일 경우 자기 자신의 값
     @NotNull
-    private Long ParentNum;
+    private Long parentNum;
 
     //답글의 순번
     @NotNull
@@ -43,12 +40,11 @@ public class Board {
 
 
     @Builder
-    public Board(Long id, Long bno, String title, String content, Long parentNum, Long childNum, Long depth) {
+    public Board(Long id, String title, String content, Long parentNum, Long childNum, Long depth) {
         this.id = id;
-        this.bno = bno;
         this.title = title;
         this.content = content;
-        this.ParentNum = parentNum;
+        this.parentNum = parentNum;
         this.childNum = childNum;
         this.depth = depth;
     }

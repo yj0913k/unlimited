@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+
+    <!-- jQuery -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+
+
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+
+    <title>board</title>
+
+
+    <style>
+
+        body {
+
+            padding-top: 70px;
+
+            padding-bottom: 30px;
+
+        }
+
+
+    </style>
+
+</head>
+
+<body>
+
+<article>
+
+    <div class="container" role="main">
+
+        <h2>board Form</h2>
+
+
+        <tr th:each="board : ${board}">
+
+            <div class="mb-3">
+                <td type="text" name="title" th:text="${board.title}">
+<!--                    <label for="title">제목</label>-->
+                </td>
+            </div>
+            <div class="mb-3">
+                <td type="text" name="content" th:text="${board.content}">
+<!--                    <label for="content">내용</label>-->
+                </td>
+
+
+            </div>
+        </tr>
+
+
+        <div>
+            <form action="/board/register" method="get">
+                <button type="submit" class="btn btn-sm btn-primary" id="btnSave">답글달기</button>
+            </form>
+            <form action="/" method="get">
+                <button type="submit" class="btn btn-sm btn-primary" id="btnList">목록</button>
+            </form>
+            <form th:action="@{'/delete/' + ${board.id}}" th:method="delete">
+                <button type="submit" class="btn btn-sm btn-primary" id="btnList1">삭제</button>
+            </form>
+        </div>x
+
+    </div>
+
+</article>
+
+</body>
+
+</html>

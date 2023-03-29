@@ -26,15 +26,15 @@ class UnlimitedApplicationTests {
 	@Test
 	void 게시글등록() {
 
-		Board board = new Board(0L, 0L, "title", "content", 0L, 0L, 0L);
-		Board board1 = new Board(1L, 1L, "title", "content", 1L, 1L, 1L);
 
-		boardRepository.save(board);
+		Board board1 = new Board(1L, "title", "content", 1L, 1L, 1L);
+
+
 		boardRepository.save(board1);
 
 
 		/*board.setId(1LL);
-		board.setBno(1LL);
+		board.setid(1LL);
 		board.setTitle("제목");
 		board.setContent("내용");
 		board.setParentNum(1LL);
@@ -43,5 +43,19 @@ class UnlimitedApplicationTests {
 		boardRepository.save(board);*/
 
 	}
+	@Test
+	void 게시글등록더미() {
+		for (int i = 0; i < 100; i++) {
+			Board board = new Board();
+			board.setTitle("title" + i);
+			board.setContent("content" + i);
+			board.setParentNum(1L);
+			board.setChildNum(1L);
+			board.setDepth(1L);
+
+			boardRepository.save(board);
+		}
+	}
+
 
 }
