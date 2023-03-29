@@ -39,7 +39,7 @@ public class BoardController {
     /*
     게시판으로 이동
      */
-    @PostMapping("/board")
+  /*  @PostMapping("/board")
     public String board(@Validated @ModelAttribute Board board, BindingResult bindingResult, Model model,
                         @RequestParam(value = "page", defaultValue = "1") int pageNum) {
 
@@ -56,22 +56,39 @@ public class BoardController {
         model.addAttribute("board", boardList);
 
         return "board";
-    }
+    }*/
 
     /*
     페이징
      */
-    @GetMapping("/page/{pageNum})")
+//    @GetMapping("/page/{pageNum})")
     public String list (Model model,  @RequestParam(value = "page", defaultValue = "1") int pageNum){
         Integer[] pageList = boardService.getPageList(pageNum);
 
-        List<BoardDTO> boardList = boardService.getBoarsList(pageNum);
+        List<BoardDTO> boardList = boardService.getBoardlist(pageNum);
         model.addAttribute("pageList", pageList);
         model.addAttribute("board", boardList);
 
 
         return "board";
     }
+
+    /*
+    게시판 이동+페이징 합체
+     */
+    @GetMapping("/")
+    public String list(@Validated @ModelAttribute Board board , Model model,
+                        @RequestParam(value = "page", defaultValue = "1") int pageNum) {
+
+        List<BoardDTO> boardList = boardService.getBoardlist(pageNum);
+        Integer[] pageList = boardService.getPageList(pageNum);
+        model.addAttribute("pageList", pageList);
+        model.addAttribute("board", boardList);
+
+        return "board";
+    }
+
+
 
     /*
     게시글 작성 이동

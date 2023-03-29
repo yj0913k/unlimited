@@ -24,14 +24,15 @@ public class BoardService {
     /*
     한페이지 게시글 수
      */
-    private static final int BLOCK_NUM = 1000;
+    private static final int BLOCK_NUM = 30;
 
 
     // 두가지를 한번에 하기에는 양이 조금 많고 추후에 무거울 수 도 있을 것 같다.
     //전체를 한번 불러 온 후에 페이징 해야하므로 분리 해야함.
     //게시글 리스트
-    public List<BoardDTO> getBoardlist() {
+  /*  public List<BoardDTO> getBoardlist(Integer pageNum) {
 
+        Page<Board> page = boardRepository.findAll(PageRequest.of(pageNum - 1, PAGE_POST_COUNT, Sort.by(Sort.Direction.ASC, "id")));
 
         List<Board> board = boardRepository.findAll();
 
@@ -52,9 +53,9 @@ public class BoardService {
         return boardDTOList;
 
 
-    }
+    }*/
 
-    public List<BoardDTO> getBoarsList(Integer pageNum) {
+    public List<BoardDTO> getBoardlist(Integer pageNum) {
         Page<Board> page = boardRepository.findAll(PageRequest.of(pageNum - 1, PAGE_POST_COUNT, Sort.by(Sort.Direction.ASC, "id")));
 
         List<Board> boards = page.getContent();
@@ -91,12 +92,10 @@ public class BoardService {
         Double postsTotalCount = Double.valueOf(this.getBoardCount());
 
 // 총 게시글 기준으로 계산한 마지막 페이지 번호 계산 (올림으로 계산)
-        Integer totalLastPageNum = (int) (Math.ceil((postsTotalCount / PAGE_POST_COUNT)));
+        int totalLastPageNum = (int) (Math.ceil((postsTotalCount / PAGE_POST_COUNT)));
 
 // 현재 페이지를 기준으로 블럭의 마지막 페이지 번호 계산
-        Integer blockLastPageNum = (totalLastPageNum > curPageNum + BLOCK_NUM)
-                ? curPageNum + BLOCK_NUM
-                : totalLastPageNum;
+        int blockLastPageNum = Math.min(totalLastPageNum, curPageNum + BLOCK_NUM);
 
 // 페이지 시작 번호 조정
         curPageNum = (curPageNum <= 3) ? 1 : curPageNum - 2;
