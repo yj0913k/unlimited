@@ -13,4 +13,10 @@ public class BoardListForm {
 
     @NotNull
     private String content;
+
+    public BoardListForm(Board b){
+        this.id = b.getId();
+        this.title = b.getTitle();
+        this.content = b.getContent();
+    }
 }

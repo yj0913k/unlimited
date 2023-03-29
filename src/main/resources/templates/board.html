@@ -38,22 +38,38 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="board : ${board}">
+            <tr th:each="board : ${boards}">
                 <td th:text="${board.id}">글번호</td>
-
                 <td><a th:text="${board?.title} ?: '제목 없음'" th:href="@{/{id}(id=${board?.id})}">제목</a></td>
             </tr>
 
             </tbody>
         </table>
     </form>
+
     <nav>
-        <div class="pagination justify-content-center">
-            <span th:each="pageNum : ${pageList}" th:inline="text" class="page-item">
-                <a th:href="@{'/page/' + ${pageNum}}">[[${pageNum}]]</a>
-            </span>
-        </div>
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:class="${hasPrevious} ? 'page-item' : 'page-item disabled'">
+                <a class="page-link" th:href="@{'/?page=' + 1}" th:text="'&lt;&lt;'"></a>
+            </li>
+            <li class="page-item" th:class="${hasPrevious} ? 'page-item' : 'page-item disabled'">
+                <a class="page-link" th:href="@{'/?page=' + ${startPage - 1}}" th:text="'&lt;'"></a>
+            </li>
+            <th:block th:each="page : ${#numbers.sequence(currentPage - pageSize, currentPage + pageSize)}">
+                <li th:class="${page == currentPage} ? 'page-item active' : 'page-item'">
+                    <a class="page-link" th:href="@{'/?page=' + ${page}}" th:text="${page}"></a>
+                </li>
+            </th:block>
+            <li class="page-item" th:class="${hasNext} ? 'page-item' : 'page-item disabled'">
+                <a class="page-link" th:href="@{'/?page=' + ${endPage + 1}}" th:text="'&gt;'"></a>
+            </li>
+            <li class="page-item" th:class="${hasNext} ? 'page-item' : 'page-item disabled'">
+                <a class="page-link" th:href="@{'/?page=' + ${totalPages}}" th:text="'&gt;&gt;'"></a>
+            </li>
+        </ul>
     </nav>
+
+
 </div>
 </body>
 </html>
