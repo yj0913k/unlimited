@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -22,32 +23,30 @@
         crossorigin="anonymous"></script>
 <div class="container">
     <h2>Basic Table</h2>
+    <form action="/board/register" method="get">
+        <button>게시글 작성</button>
+    </form>
+
+    <form action="/bno" method="post">
+
+
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>Firstname</th>
-            <th>Lastname</th>
-            <th>Email</th>
+            <th>No</th>
+            <th>Writer</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>John</td>
-            <td>Doe</td>
-            <td>john@example.com</td>
+        <tr th:each="board : ${board}">
+            <td th:text="${board?.bno} ?: '-'">글번호</td>
+
+            <td><a th:text="${board?.title} ?: '제목 없음'"th:href="@{/{bno}(bno=${board?.bno})}">제목</a></td>
         </tr>
-        <tr>
-            <td>Mary</td>
-            <td>Moe</td>
-            <td>mary@example.com</td>
-        </tr>
-        <tr>
-            <td>July</td>
-            <td>Dooley</td>
-            <td>july@example.com</td>
-        </tr>
+
         </tbody>
     </table>
+    </form>
     <nav>
         <ul class="pagination justify-content-center">
             <li class="page-item"><a class="page-link" href="">이전</a></li>
