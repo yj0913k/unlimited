@@ -51,7 +51,7 @@ public class BoardController {
         model.addAttribute("pageList", pageList);
 
 
-        List<BoardDTO> boardList = boardService.getBoardlist(1);
+        List<BoardDTO> boardList = boardService.getBoardlist();
 
         model.addAttribute("board", boardList);
 
@@ -62,10 +62,10 @@ public class BoardController {
     페이징
      */
     @GetMapping("/page/{pageNum})")
-    public String list (@Validated @ModelAttribute Board board, Model model,  @RequestParam(value = "page", defaultValue = "1") int pageNum){
+    public String list (Model model,  @RequestParam(value = "page", defaultValue = "1") int pageNum){
         Integer[] pageList = boardService.getPageList(pageNum);
 
-        List<BoardDTO> boardList = boardService.getBoardlist(pageNum);
+        List<BoardDTO> boardList = boardService.getBoarsList(pageNum);
         model.addAttribute("pageList", pageList);
         model.addAttribute("board", boardList);
 
