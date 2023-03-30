@@ -2,7 +2,6 @@ package board.unlimited;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.mapping.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,8 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,61 +27,17 @@ public class BoardController {
     BoardRepository boardRepository;
 
     @Autowired
-    BoardService boardService;
+    private BoardService boardService;
 
     /*
     게시글 상세페이지 이동
- */
+    */
     @GetMapping("/{id}")
-    public String boardView(@Validated @PathVariable("id") Long id,Model model) {
+    public String boardView(@PathVariable("id") Long id,Model model) {
         BoardDTO boardDTO = boardService.detail(id);
-
         model.addAttribute("board", boardDTO);
-
         return "boardView";
     }
-
-
-    /*
-    게시판으로 이동
-     */
-  /*  @PostMapping("/board")
-    public String board(@Validated @ModelAttribute Board board, BindingResult bindingResult, Model model,
-                        @RequestParam(value = "page", defaultValue = "1") int pageNum) {
-
-//        if (bindingResult.hasErrors()) {
-//            log.info("errors={}", "에러");
-//        }
-
-        Integer[] pageList = boardService.getPageList(pageNum);
-        model.addAttribute("pageList", pageList);
-
-
-        List<BoardDTO> boardList = boardService.getBoardlist();
-
-        model.addAttribute("board", boardList);
-
-        return "board";
-    }*/
-
-    /*
-    페이징
-     */
-//    @GetMapping("/page/{pageNum})")
-    /*public String list (Model model,  @RequestParam(value = "page", defaultValue = "1") int pageNum){
-        Integer[] pageList = boardService.getPageList(pageNum);
-
-        List<BoardDTO> boardList = boardService.getBoardlist(pageNum);
-        model.addAttribute("pageList", pageList);
-        model.addAttribute("board", boardList);
-
-
-        return "board";
-    }*/
-
-    /*
-    한페이지에 몇개나?
-     */
 
     /*
     게시판 이동+페이징 합체
@@ -93,7 +46,7 @@ public class BoardController {
     public String list(Model model, @RequestParam(value = "page", defaultValue = "1") int pageNum) {
         int pageSize = 5; //한 화면에 보여주는 게시글 수
         int pageBlockSize = 5; // 한번에 보여줄 페이지 수
-        Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by("no").descending());
         Page<Board> boardPage = boardRepository.findAll(pageable);
         List<Board> boards = boardPage.getContent();
         model.addAttribute("boards", boards);
@@ -136,13 +89,12 @@ public class BoardController {
     }
 
 
-
     /*
     게시글 작성 이동
      */
     @GetMapping("/board/register")
-    public String boardRegister() {
-
+    public String boardRegister(Long parentId, Model model) {
+        model.addAttribute("parentId", parentId);
         return "boardRegister";
     }
 
@@ -150,26 +102,32 @@ public class BoardController {
     게시글 등록
      */
     @PostMapping("/board/register")
-    public String boardRegister(@Validated @ModelAttribute Board board, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            log.info("errors={}", "등록 실패입니다");
-        }
-        board.setDepth(0L);
-        board.setParentNum(0L);
-        board.setChildNum(0L);
-
-        boardRepository.save(board);
-
-
-
+    public String register(Long parentId, BoardDTO boardDTO) {
+        boardService.save(parentId, boardDTO);
         return "redirect:/";
     }
 
+    /*
+    답글등록 페이지 이동
+     */
+    @GetMapping("/board/registerChild")
+    public String registerChild(){
+        return "boardRegisterChild";
+    }
+
+
+    /*
+    답글 등록하기
+     */
+    @PostMapping("/board/registerChild")
+    public String registerChild(Long no, Board parentNum, BoardDTO boardDTO) { // itemNo=상품번호, no=문의글번호
+        boardService.saveChild(parentNum, no, boardDTO);
+        return "redirect:/";
+    }
 
     @DeleteMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id) {
-
-        boardService.deleteById(id);
+    public String delete(@PathVariable("id") Long no) {
+        boardService.deleteByNo(no);
         return "redirect:/";
     }
 

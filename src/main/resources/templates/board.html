@@ -46,8 +46,8 @@
             </thead>
             <tbody>
             <tr th:each="board : ${boards}">
-                <td th:text="${board.id}">글번호</td>
-                <td><a th:text="${board?.title} ?: '제목 없음'" th:href="@{/{id}(id=${board?.id})}">제목</a></td>
+                <td th:text="${board.no}">글번호</td>
+                <td><a th:text="${board?.title} ?: '제목 없음'" th:href="@{/{id}(id=${board?.no})}">제목</a></td>
             </tr>
 
             </tbody>

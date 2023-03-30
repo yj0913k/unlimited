@@ -7,7 +7,7 @@ import lombok.Data;
 public class BoardListForm {
 
     @NotNull
-    private Long id;
+    private Long no;
     @NotNull
     private String title;
 
@@ -15,7 +15,7 @@ public class BoardListForm {
     private String content;
 
     public BoardListForm(Board b){
-        this.id = b.getId();
+        this.no = b.getNo();
         this.title = b.getTitle();
         this.content = b.getContent();
     }
