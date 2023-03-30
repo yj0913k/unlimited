@@ -77,9 +77,9 @@ public class BoardServiceImpl implements BoardService{
 
         Board parentId = Board.builder().no(no).build();
 
-        List<Board> qnaResult = boardRepository.getBoardList(parentId);
+        List<Board> boardResult = boardRepository.getBoardList(parentId);
 
-        return qnaResult.stream().map(this::entityToDTO).collect(Collectors.toList());
+        return boardResult.stream().map(this::entityToDTO).collect(Collectors.toList());
     }
 
 
