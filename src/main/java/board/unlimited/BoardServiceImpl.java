@@ -13,9 +13,6 @@ public class BoardServiceImpl implements BoardService {
     private BoardRepository boardRepository;
 
 
-    @Override
-    public Long getBoardCount() {
-        return boardRepository.count();    }
 
     @Override
     public BoardDTO detail(Long id) {

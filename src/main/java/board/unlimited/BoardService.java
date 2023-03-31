@@ -10,8 +10,7 @@ import java.util.Optional;
 
 
 public interface BoardService{
-    public Long getBoardCount();
-    public BoardDTO detail(Long id);
-    public void deleteById(Long id);
+    BoardDTO detail(Long id);
+    void deleteById(Long id);
     void updateById(Long id, Board board);
 }
