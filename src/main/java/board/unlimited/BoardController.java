@@ -45,26 +45,23 @@ public class BoardController {
     }
 
     @GetMapping("/")
-    public String list(Model model,@PageableDefault(size=10) Pageable pageable, @RequestParam(value = "page", defaultValue = "0") int pageNum) {
+    public String list(Model model,@PageableDefault(size=10) Pageable pageable, @RequestParam(value = "page", defaultValue = "1") int pageNum) {
 
         //페이지 정렬 방법.
         //한 페이지당 보여줄 페이지 수
-         pageable = PageRequest.of(pageNum , 10, Sort.by("id").descending());
+         pageable = PageRequest.of(pageNum-1 , 10, Sort.by("id").descending());
         Page<Board> boardPage = boardRepository.findAll(pageable);
         List<Board> boards = boardPage.getContent();
         model.addAttribute("boards", boards);
         model.addAttribute("currentPage", pageNum);
         model.addAttribute("totalPages", boardPage.getTotalPages());
-        Page<BoardListDTO> paging = boardPage.map(BoardListDTO::new);
-
-        int startPage = Math.max(1, boardPage.getPageable().getPageNumber() - 2);
-        int endPage = Math.min(boardPage.getTotalPages(), boardPage.getPageable().getPageNumber() + 2);
+        int startPage = Math.max(1, boardPage.getPageable().getPageNumber() - 1);
+        int endPage = Math.min(boardPage.getTotalPages(), boardPage.getPageable().getPageNumber() + 3);
         boolean hasPrevious = startPage > 1;
         boolean hasNext = endPage < boardPage.getTotalPages();
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         model.addAttribute("hasPrevious", hasPrevious);
-        model.addAttribute("paging", paging);
         model.addAttribute("hasNext", hasNext);
         List<Board> boardList = boardRepository.findAll();
         model.addAttribute("board", boardList);

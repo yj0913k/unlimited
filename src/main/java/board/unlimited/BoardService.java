@@ -7,23 +7,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-@Service
-@AllArgsConstructor
-@Transactional
-@Slf4j
+
 public class BoardService{
     private BoardRepository boardRepository;
-
-    /*
-    한 화면 페이지링크 수
-     */
-    private static final int PAGE_POST_COUNT = 8;
-    /*
-    한페이지 게시글 수
-     */
-    private static final int BLOCK_NUM = 30;
-
-
 
     //entity 값을 DTO로 변환하여 리스트에 하나씩 넣어줌
     private BoardDTO dtos(Board boardEntity) {
@@ -40,38 +26,6 @@ public class BoardService{
     @Transactional
     public Long getBoardCount() {
         return boardRepository.count();
-    }
-
-    public Integer[] getPageList(Integer selectPageNum) {
-        Integer[] pageList = new Integer[BLOCK_NUM];
-
-
-        /*
-        총 게시글
-         */
-        Double TotalCount = Double.valueOf(this.getBoardCount());
-
-        /*
-        마지막 페이지
-         */
-        int LastPageNum = (int) (Math.ceil((TotalCount / PAGE_POST_COUNT)));
-
-        /*
-        마지막 페이지(게시글 n개로 나누었을 때)
-         */
-        Integer blockLastPageNum = (LastPageNum > selectPageNum + BLOCK_NUM)
-                ? selectPageNum + BLOCK_NUM
-                : LastPageNum;
-        /*
-        페이지 시작번호
-         */
-        selectPageNum = (selectPageNum <= 3) ? 1 : selectPageNum - 2;
-
-        for (int val = selectPageNum, idx = 0; val <= blockLastPageNum; val++, idx++) {
-            pageList[idx] = val;
-        }
-
-        return pageList;
     }
 
 
@@ -91,9 +45,6 @@ public class BoardService{
         return boardDTO;
 
     }
-
-//    board 게시글 등록 부모값 증가
-
 
 
 
