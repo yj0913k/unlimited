@@ -91,6 +91,10 @@ public class BoardController {
      */
     @GetMapping("/")
     public String list(Model model,@PageableDefault(size=10) Pageable pageable, @RequestParam(value = "page", defaultValue = "1") int pageNum) {
+
+        //페이지 정렬 방법.
+        //한 페이지당 보여줄 페이지 수
+         pageable = PageRequest.of(pageNum , 10, Sort.by("id").descending());
         Page<Board> boardPage = boardRepository.findAll(pageable);
         List<Board> boards = boardPage.getContent();
         model.addAttribute("boards", boards);
