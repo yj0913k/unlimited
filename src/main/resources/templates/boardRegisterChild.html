@@ -67,9 +67,9 @@
 
     <div class="container" role="main">
 
-        <h2>board Form</h2>
+        <h2>board Form 다답글</h2>
 
-        <form name="form" id="form" role="form" method="post" action="/board/register">
+        <form name="form" id="form" role="form" method="post" action="/board/registerChild">
 
             <div class="mb-3">
 
@@ -84,7 +84,7 @@
 
                 <textarea class="form-control" rows="5" name="content" id="content"
                           placeholder="내용을 입력해 주세요"></textarea>
-
+                <input th:class="${childNum}" type="hidden" id="childNum" name="childNum">
             </div>
 
 

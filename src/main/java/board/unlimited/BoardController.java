@@ -2,12 +2,12 @@ package board.unlimited;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.mapping.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -90,47 +90,26 @@ public class BoardController {
     게시판 이동+페이징 합체
      */
     @GetMapping("/")
-    public String list(Model model, @RequestParam(value = "page", defaultValue = "1") int pageNum) {
-        int pageSize = 5; //한 화면에 보여주는 게시글 수
-        int pageBlockSize = 5; // 한번에 보여줄 페이지 수
-        Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by("id").descending());
+    public String list(Model model,@PageableDefault(size=10) Pageable pageable, @RequestParam(value = "page", defaultValue = "1") int pageNum) {
         Page<Board> boardPage = boardRepository.findAll(pageable);
         List<Board> boards = boardPage.getContent();
         model.addAttribute("boards", boards);
         model.addAttribute("currentPage", pageNum);
         model.addAttribute("totalPages", boardPage.getTotalPages());
+        Page<BoardListDTO> paging = boardPage.map(BoardListDTO::new);
 
-/*
-현재 페이지가 중앙으로 오지 않고 5개씩 움직인다..
-페이지들의 값이 고정적이기 때문에 변수를 추가해야함...
-        List<Integer> pageList = IntStream.rangeClosed(center-2, center+2).boxed().collect(Collectors.toList());
-*/
-        int startPage = ((pageNum - 1) / pageBlockSize) * pageBlockSize + 1;
-        int endPage = Math.min(startPage + pageBlockSize - 1, boardPage.getTotalPages());
-        int center = startPage + (endPage - startPage) / 2;
-        List<Integer> pageList = IntStream.rangeClosed(startPage, endPage).boxed().collect(Collectors.toList());
-
-        Page<BoardListForm> paging = boardPage.map(BoardListForm::new);
-
+        int startPage = Math.max(1, boardPage.getPageable().getPageNumber() - 2);
+        int endPage = Math.min(boardPage.getTotalPages(), boardPage.getPageable().getPageNumber() + 2);
         boolean hasPrevious = startPage > 1;
         boolean hasNext = endPage < boardPage.getTotalPages();
-
-        startPage = center - pageBlockSize / 2;
-        endPage = center + pageBlockSize / 2;
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
-        model.addAttribute("midPage", center);
         model.addAttribute("hasPrevious", hasPrevious);
         model.addAttribute("paging", paging);
-        model.addAttribute("pageSize", Math.floor(pageSize/2));
         model.addAttribute("hasNext", hasNext);
-        model.addAttribute("pageList", pageList);
-        log.info("startPage={}, endPage={}, midPage={}, hasPrevious={}, paging={}, hasNext={}, pageList={}",
-                startPage, endPage, center, hasPrevious, paging, hasNext, pageList);
-
-
-        List<BoardDTO> boardList = boardService.getBoardlist(pageNum);
+        List<Board> boardList = boardRepository.findAll();
         model.addAttribute("board", boardList);
+
 
         return "board";
     }
@@ -146,8 +125,10 @@ public class BoardController {
         return "boardRegister";
     }
 
+
     /*
     게시글 등록
+    계층형 쿼리 시작  30. 10:00AM
      */
     @PostMapping("/board/register")
     public String boardRegister(@Validated @ModelAttribute Board board, BindingResult bindingResult) {
@@ -155,13 +136,34 @@ public class BoardController {
             log.info("errors={}", "등록 실패입니다");
         }
         board.setDepth(0L);
-        board.setParentNum(0L);
         board.setChildNum(0L);
+        boardRepository.save(board);
+        return "redirect:/";
+    }
+
+
+    /*
+       답글 작성 이동
+  */
+    @GetMapping("/board/registerChild")
+    public String boardRegisterChild(@Validated @ModelAttribute Board board,Model model) {
+        Long childNum = 1L;
+        model.addAttribute("childNum", childNum);
+        childNum++;
+
+
+        return "boardRegisterChild";
+    }
+/*
+답글들
+ */
+    @PostMapping("/board/registerChild")
+    public String boardRegisterChild(@Validated @ModelAttribute Board board, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            log.info("errors={}", "등록 실패입니다");
+        }
 
         boardRepository.save(board);
-
-
-
         return "redirect:/";
     }
 
@@ -172,5 +174,6 @@ public class BoardController {
         boardService.deleteById(id);
         return "redirect:/";
     }
+
 
 }

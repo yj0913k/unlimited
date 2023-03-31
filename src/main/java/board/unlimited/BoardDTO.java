@@ -1,14 +1,12 @@
 package board.unlimited;
 
-import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -18,18 +16,21 @@ public class BoardDTO {
     private String title;
     private String content;
     private Long parentNum;
+
     private Long childNum;
     private Long depth;
 
-    public Board toEntity(){
-        Board boardEntity = new Board().builder()
-                .id(id)
-                .title(title)
-                .content(content)
-                .parentNum(parentNum)
-                .childNum(childNum)
-                .depth(depth).build();
-        return boardEntity;
+
+    public Board toDTO() {
+        Board board = BoardDTO.builder()
+                .id(this.id)
+                .title(this.title)
+                .content(this.content)
+                .parentNum(this.parentNum)
+                .childNum(this.childNum)
+                .depth(this.depth)
+                .build().toDTO();
+        return board;
     }
 
     @Builder

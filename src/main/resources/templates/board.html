@@ -16,6 +16,29 @@
             display: none;
         }
     </style>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            let startPage1 = Math.max(currentPage - pageSize, 1);
+            let endPage1 = Math.min(currentPage + pageSize, endPage);
+            let maxStartPage1 = Math.max(...Array.from({length: currentPage - Math.max(currentPage - pageSize, 1)}).map((_, i) => i + Math.max(currentPage - pageSize, 1)));
+
+            let minEndPage1 = Math.min(...Array.from({length: endPage1 - currentPage}).map((_, i) => currentPage + i + 1));
+            let pages = Array.from({length: endPage1 - startPage1 + 1}).map((_, i) => startPage1 + i);
+
+            for (let i = 0; i < pages.length; i++) {
+                let page = pages[i];
+                let isActive = page === currentPage;
+                let liClass = isActive ? 'page-item active' : 'page-item';
+                let aHref = `/?page=${page}`;
+                let aText = `${page}`;
+
+            }
+        });
+
+
+    </script>
+
 </head>
 
 <body>
@@ -62,11 +85,13 @@
             <li class="page-item" th:class="${hasPrevious} ? 'page-item' : 'page-item disabled'">
                 <a class="page-link" th:href="@{'/?page=' + ${startPage - 1}}" th:text="'&lt;'"></a>
             </li>
-            <th:block th:each="page : ${#numbers.sequence(currentPage - pageSize, currentPage + pageSize)}">
-                <li th:class="${page == currentPage} ? 'page-item active' : 'page-item'">
-                    <a class="page-link" th:href="@{'/?page=' + ${page}}" th:text="${page}"></a>
-                </li>
-            </th:block>
+
+                <th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
+                    <li th:class="${page == currentPage} ? 'page-item active' : 'page-item'">
+                        <a class="page-link" th:href="@{'/?page=' + ${page}}" th:text="${page}" th:data-page="${page}"></a>
+                    </li>
+                </th:block>
+
             <li class="page-item" th:class="${hasNext} ? 'page-item' : 'page-item disabled'">
                 <a class="page-link" th:href="@{'/?page=' + ${endPage + 1}}" th:text="'&gt;'"></a>
             </li>

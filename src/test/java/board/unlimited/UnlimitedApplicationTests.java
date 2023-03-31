@@ -49,9 +49,9 @@ class UnlimitedApplicationTests {
 			Board board = new Board();
 			board.setTitle("title" + i);
 			board.setContent("content" + i);
-			board.setParentNum(1L);
-			board.setChildNum(1L);
-			board.setDepth(1L);
+			board.setParentNum((long) (i + 1));
+			board.setChildNum(0L);
+			board.setDepth(0L);
 
 			boardRepository.save(board);
 		}

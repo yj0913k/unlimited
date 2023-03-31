@@ -2,15 +2,18 @@ package board.unlimited;
 
 import com.sun.istack.NotNull;
 import lombok.*;
+import org.hibernate.Hibernate;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @NoArgsConstructor
+
 public class Board {
 
     @Id
@@ -25,6 +28,7 @@ public class Board {
     private String content;
 
     //부모글의 주소. 자신이 부모일 경우 자기 자신의 값
+
     @NotNull
     private Long parentNum;
 
@@ -48,4 +52,19 @@ public class Board {
         this.childNum = childNum;
         this.depth = depth;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Board board = (Board) o;
+        return getId() != null && Objects.equals(getId(), board.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+
 }
