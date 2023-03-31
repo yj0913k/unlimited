@@ -44,53 +44,8 @@ public class BoardController {
         return "boardView";
     }
 
-
-    /*
-    게시판으로 이동
-     */
-  /*  @PostMapping("/board")
-    public String board(@Validated @ModelAttribute Board board, BindingResult bindingResult, Model model,
-                        @RequestParam(value = "page", defaultValue = "1") int pageNum) {
-
-//        if (bindingResult.hasErrors()) {
-//            log.info("errors={}", "에러");
-//        }
-
-        Integer[] pageList = boardService.getPageList(pageNum);
-        model.addAttribute("pageList", pageList);
-
-
-        List<BoardDTO> boardList = boardService.getBoardlist();
-
-        model.addAttribute("board", boardList);
-
-        return "board";
-    }*/
-
-    /*
-    페이징
-     */
-//    @GetMapping("/page/{pageNum})")
-    /*public String list (Model model,  @RequestParam(value = "page", defaultValue = "1") int pageNum){
-        Integer[] pageList = boardService.getPageList(pageNum);
-
-        List<BoardDTO> boardList = boardService.getBoardlist(pageNum);
-        model.addAttribute("pageList", pageList);
-        model.addAttribute("board", boardList);
-
-
-        return "board";
-    }*/
-
-    /*
-    한페이지에 몇개나?
-     */
-
-    /*
-    게시판 이동+페이징 합체
-     */
     @GetMapping("/")
-    public String list(Model model,@PageableDefault(size=10) Pageable pageable, @RequestParam(value = "page", defaultValue = "1") int pageNum) {
+    public String list(Model model,@PageableDefault(size=10) Pageable pageable, @RequestParam(value = "page", defaultValue = "0") int pageNum) {
 
         //페이지 정렬 방법.
         //한 페이지당 보여줄 페이지 수
@@ -129,7 +84,6 @@ public class BoardController {
         return "boardRegister";
     }
 
-
     /*
     게시글 등록
     계층형 쿼리 시작  30. 10:00AM
@@ -144,8 +98,6 @@ public class BoardController {
         boardRepository.save(board);
         return "redirect:/";
     }
-
-
     /*
        답글 작성 이동
   */
@@ -154,8 +106,6 @@ public class BoardController {
         Long childNum = 1L;
         model.addAttribute("childNum", childNum);
         childNum++;
-
-
         return "boardRegisterChild";
     }
 /*
