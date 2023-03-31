@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-
 @Controller
 @Slf4j
 @AllArgsConstructor
@@ -36,7 +35,7 @@ public class BoardController {
     게시글 상세페이지 이동
  */
     @GetMapping("/{id}")
-    public String boardView(@Validated @PathVariable("id") Long id,Model model) {
+    public String boardView(@Validated @PathVariable("id") Long id, Model model) {
         BoardDTO boardDTO = boardService.detail(id);
 
         model.addAttribute("board", boardDTO);
@@ -45,11 +44,11 @@ public class BoardController {
     }
 
     @GetMapping("/")
-    public String list(Model model,@PageableDefault(size=10) Pageable pageable, @RequestParam(value = "page", defaultValue = "1") int pageNum) {
+    public String list(Model model, @PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "page", defaultValue = "1") int pageNum) {
 
         //페이지 정렬 방법.
         //한 페이지당 보여줄 페이지 수
-         pageable = PageRequest.of(pageNum-1 , 10, Sort.by("id").descending());
+        pageable = PageRequest.of(pageNum - 1, 10, Sort.by("id").descending());
         Page<Board> boardPage = boardRepository.findAll(pageable);
         List<Board> boards = boardPage.getContent();
         model.addAttribute("boards", boards);
@@ -69,7 +68,6 @@ public class BoardController {
 
         return "board";
     }
-
 
 
     /*
@@ -95,19 +93,21 @@ public class BoardController {
         boardRepository.save(board);
         return "redirect:/";
     }
+
     /*
        답글 작성 이동
   */
     @GetMapping("/board/registerChild")
-    public String boardRegisterChild(@Validated @ModelAttribute Board board,Model model) {
+    public String boardRegisterChild(@Validated @ModelAttribute Board board, Model model) {
         Long childNum = 1L;
         model.addAttribute("childNum", childNum);
         childNum++;
         return "boardRegisterChild";
     }
-/*
-답글들
- */
+
+    /*
+    답글들
+     */
     @PostMapping("/board/registerChild")
     public String boardRegisterChild(@Validated @ModelAttribute Board board, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -127,4 +127,19 @@ public class BoardController {
     }
 
 
+    @GetMapping("/board/edit/{id}")
+    public String update(@PathVariable("id") Long id,Model model){
+        BoardDTO boardDTO = boardService.detail(id);
+
+        model.addAttribute("board", boardDTO);
+        return "boardEdit";
+    }
+
+
+
+    @PostMapping("/board/edit/{id}")
+    public String update(@PathVariable("id") Long id,Board board) {
+        boardService.updateById(id, board);
+        return "redirect:/";
+    }
 }
