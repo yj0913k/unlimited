@@ -52,6 +52,7 @@
         <label for="title">제목</label>
 
         <input type="text" class="form-control" name="title" id="title" placeholder="제목을 입력해 주세요">
+        <input type="hidden" th:text="${board.parent}" id="parent" name="parent">
       </div>
 
       <div class="mb-3">
@@ -60,8 +61,6 @@
 
         <textarea class="form-control" rows="5" name="content" id="content"
                   placeholder="내용을 입력해 주세요"></textarea>
-
-
       </div>
 
 

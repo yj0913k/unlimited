@@ -47,47 +47,24 @@
 
         <h2>board Form 다답글</h2>
 
-        <!--<form name="form" id="form" role="form" method="post" action="/board/registerChild">
-
-            <div class="mb-3">
-
-                <label for="title">제목</label>
-
-                <input type="text" class="form-control" name="title" id="title" placeholder="제목을 입력해 주세요">
-            </div>
-
-            <div class="mb-3">
-
-                <label for="content">내용</label>
-
-                <textarea class="form-control" rows="5" name="content" id="content"
-                          placeholder="내용을 입력해 주세요"></textarea>
-                    <input type="hidden" name="parentNum" th:value="${board.parentNum}" />
-                    <input type="hidden" name="childNum" th:value="${board.childNum}" />
 
 
-            </div>
-
-
-            <div>
-
-                <button type="submit" class="btn btn-sm btn-primary" id="btnSave">저장</button>
-            </div>
-        </form>-->
-
-        <form action="/board/registerChild" method="POST">
+        <form th:action="@{'/board/registerChild/' + ${board.id}}" method="POST">
             <input type="hidden" name="_csrf" value="${_csrf.token}">
-            <div>
-                <label for="parentId">Parent ID:</label>
-                <input type="number" id="parentId" name="parentId" required>
-            </div>
+<!--            <div>-->
+<!--                <label for="parentId">Parent ID:</label>-->
+<!--                <input type="number" id="parentId" name="parentId" required>-->
+<!--            </div>-->
             <div>
                 <label for="title">Title:</label>
-                <input type="text" id="title" name="title" required>
+                <input type="text" id="title" name="title" required th:text="${board.title}">
+
+                <input type="hidden" th:text="${board.parent}" id="parent" name="parent">
+
             </div>
             <div>
                 <label for="content">Content:</label>
-                <textarea id="content" name="content" rows="5" required></textarea>
+                <textarea id="content" name="content" rows="5" required th:text="${board.content}"></textarea>
             </div>
             <button type="submit">Submit</button>
         </form>

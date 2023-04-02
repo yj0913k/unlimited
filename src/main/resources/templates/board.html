@@ -36,50 +36,37 @@
         <button>게시글 작성</button>
     </form>
 
-    <form action="/*{id}" method="post">
 
-
-        <table class="table table-striped">
-            <tbody>
-            <div class="board">
-                <tr>
-                    <th>No</th>
-                    <th>제목</th>
-                </tr>
-                <tr  th:each="board : ${boardDTOList}">
-                    <td th:text="${board.id}"></td>
-                    <td>
+    <table>
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="board : ${boardDTOList}">
+            <td th:text="${board.id}"></td>
+            <td>
+                <div>
+                    <a th:text="${board.title} ?: '제목 없음'" th:href="@{/{id}(id=${board.id})}">제목</a>
+                </div>
+                <ul th:if="${board.children}">
+                    <li th:each="child : ${board.children}">
                         <div>
-                            <a th:text="${board?.title} ?: '제목 없음'" th:href="@{/{id}(id=${board?.id})}">제목</a>
-<!--                            <h3 th:text="${board.title}"></h3>-->
+                            <a th:text="${child.title} ?: '제목 없음'" th:href="@{/{id}(id=${child.id})}">제목</a>
                         </div>
-                        <ul th:if="${board.children}">
-                            <li th:each="child : ${board.children}">
-                                <div>
-                                    <a th:text="${child.title} ?: '제목 없음'" th:href="@{/{id}(id=${child?.id})}">제목</a>
-                                </div>
-                                <ul th:if="${child.children}">
-                                    <li th:each="grandchild : ${child.children}">
-                                        ...
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </td>
+                        <div th:if="${child.children}">
+                            <div th:replace="fragments/child-list :: child-list (board=${child})"></div>
+                        </div>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-                </tr>
-            </div>
 
-            </tbody>
-<!--            <tbody>-->
-<!--            <tr th:each="board : ${boards}">-->
-<!--                <td th:text="${board.id}">글번호</td>-->
-<!--                <td><a th:text="${board?.title} ?: '제목 없음'" th:href="@{/{id}(id=${board?.id})}">제목</a></td>-->
-<!--            </tr>-->
-
-<!--            </tbody>-->
-        </table>
-    </form>
 
     <nav>
         <ul class="pagination justify-content-center">

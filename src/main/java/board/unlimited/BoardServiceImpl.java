@@ -54,20 +54,48 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void updateById(Long id,Board board) {
+    public void updateById(Long id,Board board, Board parent) {
+
         Board update = boardRepository.findById(id).get();
         update.setTitle(board.getTitle());
         update.setContent(board.getContent());
-        boardRepository.save(board);
+        Board parentBoard = boardRepository.findById(parent.getId()).orElse(null);
+        update.setParent(parentBoard.getParent());
+        update.setDepth(parentBoard.getDepth());
+        boardRepository.save(update);
 
     }
 
-
-
-
-    public List<Board> findAllBoardsSortedByDepth() {
-        List<Board> boardList = boardRepository.findAll();
-        Collections.sort(boardList, Comparator.comparing(Board::getDepth));
-        return boardList;
+    @Override
+    public List<BoardDTO> findChildren(BoardDTO boardDTO) {
+        List<Board> children = boardRepository.findByParentId(boardDTO.getId());
+        List<BoardDTO> result = new ArrayList<>();
+        for (Board child : children) {
+            BoardDTO childDTO = child.toDTO();
+            childDTO.setChildren(findChildren(childDTO)); // 자식 노드의 자식 노드를 재귀적으로 찾음
+            result.add(childDTO);
+        }
+        return result;
     }
+
+    @Override
+    public void createChild(Long id, Board board, Board parent) {
+        Board parentBoard = boardRepository.findById(parent.getId()).orElse(null);
+        Board parents = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid board Id:" + parent));
+
+        Long depth = parentBoard.getDepth() != null ? parentBoard.getDepth() + 1 : 0;
+
+        Board child = Board.builder()
+                .title(board.getTitle())
+                .content(board.getContent())
+                .parent(parent)
+                .depth(depth)
+                .build();
+
+
+        boardRepository.save(child);
+    }
+
+
 }

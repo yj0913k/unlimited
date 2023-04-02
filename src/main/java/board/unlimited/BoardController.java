@@ -52,10 +52,15 @@ public class BoardController {
         //한 페이지당 보여줄 페이지 수
         pageable = PageRequest.of(pageNum - 1, 10, Sort.by("id").descending());
         Page<Board> boardPage = boardRepository.findAll(pageable);
-        List<BoardDTO> boardDTOList = boardRepository.findAll(pageable).stream()
-                .filter(board -> board.getParent() == null)
-                .map(Board::toDTO)
-                .collect(Collectors.toList());
+        List<BoardDTO> boardDTOList = new ArrayList<>();
+        List<Board> boardList = boardRepository.findByParentIdIsNull(pageable);
+        boardList.forEach(board -> {
+            BoardDTO boardDTO = board.toDTO();
+            boardDTO.setChildren(boardService.findChildren(boardDTO));
+            boardDTOList.add(boardDTO);
+        });
+
+
         boardDTOList.forEach(boardDTO -> {
             List<BoardDTO> children = boardRepository.findAll().stream()
                     .filter(child -> child.getParent() != null && child.getParent().getId().equals(boardDTO.getId()))
@@ -75,18 +80,9 @@ public class BoardController {
         model.addAttribute("endPage", endPage);
         model.addAttribute("hasPrevious", hasPrevious);
         model.addAttribute("hasNext", hasNext);
-//        List<Board> boardList = boardRepository.findAll();
-//        model.addAttribute("board", boardList);
-
-
-
         return "board";
     }
     //리스트
-
-
-
-
 
 
     /*
@@ -119,45 +115,22 @@ public class BoardController {
     /*
        답글 작성 이동
   */
-    @GetMapping("/board/registerChild")
-    public String boardRegisterChild(
-    ) {
-
-
+    @GetMapping("/board/registerChild/{id}")
+    public String boardRegisterChild( @PathVariable("id") Long id, Model model) {
+            BoardDTO boardDTO = boardService.detail(id);
+            model.addAttribute("board", boardDTO);
         return "boardRegisterChild";
     }
 
 
-
     //버전3
-    @PostMapping("/board/registerChild")
-    public String createChild(@RequestParam("parentId") Long parentId,
-                              @RequestParam("title") String title,
-                              @RequestParam("content") String content) {
-        Board parent = boardRepository.findById(parentId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid board Id:" + parentId));
+    @PostMapping("/board/registerChild/{id}")
+    public String createChild(@PathVariable("id") Long id, Board board, Board parent) {
 
-        Long depth = parent.getDepth() != null ? parent.getDepth() + 1 : 0;
-
-        Board child = Board.builder()
-                .title(title)
-                .content(content)
-                .parent(parent)
-                .depth(depth)
-                .build();
-
-        parent.getChildren().add(child);
-
-        boardRepository.save(child);
-        boardRepository.save(parent);
+        boardService.createChild(id, board, parent);
 
         return "redirect:/";
     }
-
-
-
-
-
 
 
     @DeleteMapping("/delete/{id}")
@@ -172,32 +145,18 @@ public class BoardController {
     public String update(@PathVariable("id") Long id, Model model) {
         BoardDTO boardDTO = boardService.detail(id);
 
+
         model.addAttribute("board", boardDTO);
         return "boardEdit";
     }
 
 
     @PostMapping("/board/edit/{id}")
-    public String update(@PathVariable("id") Long id, Board board) {
-        boardService.updateById(id, board);
+    public String update(@PathVariable("id") Long id, Board board, Board parent) {
+
+        boardService.updateById(id, board, parent);
         return "redirect:/";
     }
 
-
-
-
-
-//    private List<BoardDTO> flatten(BoardDTO boardDTO, int level) {
-//        List<BoardDTO> flatList = new ArrayList<>();
-//        boardDTO.setLevel(level);
-//        flatList.add(boardDTO);
-//        List<BoardDTO> children = boardDTO.getChildren();
-//        if (children != null) {
-//            for (BoardDTO child : children) {
-//                flatList.addAll(flatten(child, level + 1));
-//            }
-//        }
-//        return flatList;
-//    }
 
 }

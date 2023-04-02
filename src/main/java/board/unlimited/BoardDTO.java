@@ -37,6 +37,22 @@ public class BoardDTO {
         return boardDTO;
     }
 
-    public void setLevel(int level) {
+    public void setChildren(List<BoardDTO> children) {
+        this.children = children;
     }
+    public void addChild(BoardDTO child) {
+        if (children == null) {
+            children = new ArrayList<>();
+        }
+        children.add(child);
+        child.setParent(this);
+    }
+
+    public void addChildren(List<BoardDTO> children) {
+        for (BoardDTO child : children) {
+            addChild(child);
+        }
+    }
+
+
 }
