@@ -1,45 +1,42 @@
 package board.unlimited;
 
+import board.unlimited.Board;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
+@Builder
 public class BoardDTO {
     private Long id;
     private String title;
     private String content;
-    private Long parentNum;
-
-    private Long childNum;
+    private BoardDTO parent;
+    private List<BoardDTO> children = new ArrayList<>();
     private Long depth;
 
-
-    public Board toDTO() {
-        Board board = BoardDTO.builder()
-                .id(this.id)
-                .title(this.title)
-                .content(this.content)
-                .parentNum(this.parentNum)
-                .childNum(this.childNum)
-                .depth(this.depth)
-                .build().toDTO();
-        return board;
+    public static BoardDTO of(Board board) {
+        BoardDTO boardDTO = new BoardDTO();
+        boardDTO.setId(board.getId());
+        boardDTO.setTitle(board.getTitle());
+        boardDTO.setContent(board.getContent());
+        if (board.getParent() != null) {
+            boardDTO.setParent(board.getParent().toDTO());
+        }
+        if (board.getChildren() != null) {
+            boardDTO.setChildren(board.getChildren().stream().map(Board::toDTO).collect(Collectors.toList()));
+        }
+        boardDTO.setDepth(board.getDepth());
+        return boardDTO;
     }
 
-    @Builder
-    public BoardDTO(Long id, String title, String content, Long parentNum, Long childNum, Long depth) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.parentNum = parentNum;
-        this.childNum = childNum;
-        this.depth = depth;
+    public void setLevel(int level) {
     }
 }

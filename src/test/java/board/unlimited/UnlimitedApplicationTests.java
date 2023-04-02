@@ -1,61 +1,61 @@
 package board.unlimited;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.util.ArrayList;
+
 @SpringBootTest
 class UnlimitedApplicationTests {
 
+
 	@Autowired
-	BoardRepository boardRepository;
-
-
+	private BoardRepository boardRepository;
 
 	@Test
 	void contextLoads() {
 	}
 
+//	@Test
+	public static void main(String[] args) {
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistence-unit-name"); // persistence-unit-name 부분은 persistence.xml 파일의 name 값과 동일해야 합니다.
+		EntityManager em = emf.createEntityManager();
 
+		em.getTransaction().begin(); // 트랜잭션 시작
 
+		em.createNativeQuery("CREATE TABLE board ("
+				+ "id BIGINT(20) NOT NULL AUTO_INCREMENT, "
+				+ "title VARCHAR(255) NOT NULL, "
+				+ "content VARCHAR(255) NOT NULL, "
+				+ "parent_id BIGINT(20), "
+				+ "depth BIGINT(20), "
+				+ "PRIMARY KEY (id), "
+				+ "FOREIGN KEY (parent_id) REFERENCES board (id))").executeUpdate();
 
-
-	@Test
-	void 게시글등록() {
-
-
-		Board board1 = new Board(1L, "title", "content", 1L, 1L, 1L);
-
-
-		boardRepository.save(board1);
-
-
-		/*board.setId(1LL);
-		board.setid(1LL);
-		board.setTitle("제목");
-		board.setContent("내용");
-		board.setParentNum(1LL);
-		board.setChildNum(0L);
-		board.setDepth(0L);
-		boardRepository.save(board);*/
-
+		em.getTransaction().commit(); // 트랜잭션 종료
+		em.close();
+		emf.close();
 	}
-	@Test
-	void 게시글등록더미() {
-		for (int i = 0; i < 100; i++) {
-			Board board = new Board();
-			board.setTitle("title" + i);
-			board.setContent("content" + i);
-			board.setParentNum((long) (i + 1));
-			board.setChildNum(0L);
-			board.setDepth(0L);
 
+
+	@Test
+	public void create200Boards() {
+		for (int i = 1; i < 200; i++) {
+			Board board = Board.builder()
+					.title("1")
+					.content("1")
+					.children(new ArrayList<>())
+					.depth(0L) // 최상위 게시글이므로 깊이는 0으로 설정
+					.build();
 			boardRepository.save(board);
 		}
 	}
+
 
 
 }

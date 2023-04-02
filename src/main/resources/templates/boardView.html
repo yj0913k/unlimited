@@ -58,6 +58,9 @@
                 <td type="text" name="content" th:text="${board.content}">
 <!--                    <label for="content">내용</label>-->
                 </td>
+                <input th:class="${board.getChildren()}" type="hidden" name="children">
+
+                <input th:calss="${board.getParent()}" type="hidden" name="parent">
 
 
             </div>
@@ -65,9 +68,15 @@
 
 
         <div>
+<!--            <form th:href="@{/board/registerChild(parentNum=${board.parentNum}, childNum=${board.childNum})}" method="get">-->
+<!--                <button type="submit" class="btn btn-sm btn-primary" id="btnSave">답글달기</button>-->
+<!--            </form>-->
             <form action="/board/registerChild" method="get">
-                <button type="submit" class="btn btn-sm btn-primary" id="btnSave">답글달기</button>
+                <input type="hidden" name="parent" th:value="${board.parent}" />
+                <input type="hidden" name="children" th:value="${board.children}" />
+                <button type="submit">답글달기</button>
             </form>
+
             <form th:action="@{'/board/edit/' + ${board.id}}" th:method="get">
                 <button type="submit" class="btn btn-sm btn-primary" id="btnList2">수정</button>
             </form>

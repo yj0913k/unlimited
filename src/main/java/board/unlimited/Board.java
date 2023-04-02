@@ -1,11 +1,13 @@
 package board.unlimited;
 
-import com.sun.istack.NotNull;
 import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -21,11 +23,25 @@ public class Board {
     private Long id;
     private String title;
     private String content;
-    private Long parentNum;
-    private Long childNum;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Board parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    private List<Board> children = new ArrayList<>();
     private Long depth;
 
+    public BoardDTO toDTO() {
+        return  BoardDTO.builder()
+                .id(id)
+                .title(title)
+                .content(content)
+                .parent(parent != null ? parent.toDTO() : null)
+                .depth(depth)
+                .build();
 
+    }
 
 
 
@@ -41,6 +57,4 @@ public class Board {
     public int hashCode() {
         return getClass().hashCode();
     }
-
-
 }
