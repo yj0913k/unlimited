@@ -81,19 +81,18 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void createChild(Long id, Board board, Board parent) {
         Board parentBoard = boardRepository.findById(parent.getId()).orElse(null);
-        Board parents = boardRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid board Id:" + parent));
-
-        Long depth = parentBoard.getDepth() != null ? parentBoard.getDepth() + 1 : 0;
-
+        Long depth1 = parentBoard.getDepth() + 1;
+        if (parentBoard.getParent() != null) {
+            parentBoard = parentBoard.getParent();
+        } else {
+            parent = parentBoard;
+        }
         Board child = Board.builder()
                 .title(board.getTitle())
                 .content(board.getContent())
-                .parent(parent)
-                .depth(depth)
+                .parent(parentBoard)
+                .depth(depth1)
                 .build();
-
-
         boardRepository.save(child);
     }
 

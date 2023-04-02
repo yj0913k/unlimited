@@ -53,7 +53,7 @@
                 </div>
                 <ul th:if="${board.children}">
                     <li th:each="child : ${board.children}">
-                        <div>
+                        <div th:style="'padding-left:' + (${child.depth} * 20) + 'px'">
                             <a th:text="${child.title} ?: '제목 없음'" th:href="@{/{id}(id=${child.id})}">제목</a>
                         </div>
                         <div th:if="${child.children}">
@@ -61,6 +61,7 @@
                         </div>
                     </li>
                 </ul>
+
             </td>
         </tr>
         </tbody>
