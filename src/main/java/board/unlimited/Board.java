@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -31,6 +30,7 @@ public class Board {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Board> children = new ArrayList<>();
     private Long depth;
+    private Long upparent;
 
     public BoardDTO toDTO() {
         return  BoardDTO.builder()

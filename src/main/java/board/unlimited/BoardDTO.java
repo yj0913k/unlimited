@@ -21,6 +21,7 @@ public class BoardDTO {
     private BoardDTO parent;
     private List<BoardDTO> children = new ArrayList<>();
     private Long depth;
+    private Long upparent;
 
     public static BoardDTO of(Board board) {
         BoardDTO boardDTO = new BoardDTO();
@@ -29,6 +30,7 @@ public class BoardDTO {
         boardDTO.setContent(board.getContent());
         if (board.getParent() != null) {
             boardDTO.setParent(board.getParent().toDTO());
+            boardDTO.setUpparent(board.getParent().getId());
         }
         if (board.getChildren() != null) {
             boardDTO.setChildren(board.getChildren().stream().map(Board::toDTO).collect(Collectors.toList()));

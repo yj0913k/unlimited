@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.awt.print.Pageable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,6 +87,7 @@ public class BoardServiceImpl implements BoardService {
     public void createChild(Long id, Board board, Board parent) {
         Board parentBoard = boardRepository.findById(parent.getId()).orElse(null);
         Long depth1 = parentBoard.getDepth() + 1;
+        Long upparent = boardRepository.findById(parent.getId()).get().getId();
         if (parentBoard.getParent() != null) {
             parentBoard = parentBoard.getParent();
         } else {
@@ -91,10 +97,13 @@ public class BoardServiceImpl implements BoardService {
                 .title(board.getTitle())
                 .content(board.getContent())
                 .parent(parentBoard)
+                .upparent(upparent)
                 .depth(depth1)
                 .build();
         boardRepository.save(child);
     }
+
+
 
 
 }
