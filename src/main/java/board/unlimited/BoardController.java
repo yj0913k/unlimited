@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
@@ -53,12 +54,16 @@ public class BoardController {
         pageable = PageRequest.of(pageNum - 1, 10, Sort.by("id").descending());
         Page<Board> boardPage = boardRepository.findAll(pageable);
         List<BoardDTO> boardDTOList = new ArrayList<>();
+        //계층형 게시판 구현 쿼리문ING
+//        List<Board> boardList = boardRepository.findByRecursive(pageable);
+        //최상위 계층객체들을 찾아서 리스트에 넣어줌
         List<Board> boardList = boardRepository.findByParentIdIsNull(pageable);
         boardList.forEach(board -> {
             BoardDTO boardDTO = board.toDTO();
             boardDTO.setChildren(boardService.findChildren(boardDTO));
             boardDTOList.add(boardDTO);
         });
+        //모든 객체 불러오기
         boardDTOList.forEach(boardDTO -> {
             List<BoardDTO> children = boardRepository.findAll().stream()
                     .filter(child -> child.getParent() != null && child.getParent().getId().equals(boardDTO.getId()))
@@ -66,13 +71,18 @@ public class BoardController {
                     .collect(Collectors.toList());
             boardDTO.setChildren(children);
         });
+        //getTotalPage의 경우 기본값으로 id를 잡으면 삭제시 페이징처리에 문제 되므로
+        //getTotalElemenths로 설정함
+        System.out.println(boardPage.getTotalElements());
+        model.addAttribute("boardPage", boardPage);
         model.addAttribute("boardDTOList", boardDTOList);
         model.addAttribute("currentPage", pageNum);
-        model.addAttribute("totalPages", boardPage.getTotalPages()-1);
+        model.addAttribute("totalPages", boardPage.getTotalElements()%10!=0? boardPage.getTotalElements()/10+1: boardPage.getTotalElements()/10);
         int startPage = Math.max(1, boardPage.getPageable().getPageNumber() - 1);
-        int endPage = Math.min(boardPage.getTotalPages()-1, boardPage.getPageable().getPageNumber() + 3);
+        int lastPage = (int) (boardPage.getTotalElements() % 10 != 0 ? boardPage.getTotalElements() / 10 + 1 : boardPage.getTotalElements() / 10);
+        int endPage = Math.min(lastPage, boardPage.getPageable().getPageNumber() + 3);
         boolean hasPrevious = startPage > 1;
-        boolean hasNext = endPage < boardPage.getTotalPages()-1;
+        boolean hasNext = endPage < lastPage;
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         model.addAttribute("hasPrevious", hasPrevious);
@@ -80,6 +90,8 @@ public class BoardController {
         return "board";
     }
     //리스트
+
+
 
 
     /*
@@ -98,6 +110,10 @@ public class BoardController {
 
     @PostMapping("/board/register")
     public String createBoard(String title, String content) {
+        /*
+        *게시글 등록. 최상위 계층이며 children 에 배열 생성.
+        * 깊이는 0
+         */
         Board board = Board.builder()
                 .title(title)
                 .content(content)
@@ -123,16 +139,13 @@ public class BoardController {
     //버전3
     @PostMapping("/board/registerChild/{id}")
     public String createChild(@PathVariable("id") Long id, Board board, Board parent) {
-
         boardService.createChild(id, board, parent);
-
         return "redirect:/";
     }
 
 
     @DeleteMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
-
         boardService.deleteById(id);
         return "redirect:/";
     }
@@ -141,8 +154,6 @@ public class BoardController {
     @GetMapping("/board/edit/{id}")
     public String update(@PathVariable("id") Long id, Model model) {
         BoardDTO boardDTO = boardService.detail(id);
-
-
         model.addAttribute("board", boardDTO);
         return "boardEdit";
     }
@@ -150,7 +161,6 @@ public class BoardController {
 
     @PostMapping("/board/edit/{id}")
     public String update(@PathVariable("id") Long id, Board board, Board parent) {
-
         boardService.updateById(id, board, parent);
         return "redirect:/";
     }

@@ -37,7 +37,7 @@
     </form>
 
 
-    <table>
+    <table border="1px solid black">
         <thead>
         <tr>
             <th>번호</th>
@@ -85,6 +85,7 @@
                 </th:block>
 
             <li class="page-item" th:class="${hasNext} ? 'page-item' : 'page-item disabled'">
+<!--                한번에 넘어갈 페이지 값-->
                 <a class="page-link" th:href="@{'/?page=' + ${endPage + 1}}" th:text="'&gt;'"></a>
             </li>
             <li class="page-item" th:class="${hasNext} ? 'page-item' : 'page-item disabled'">

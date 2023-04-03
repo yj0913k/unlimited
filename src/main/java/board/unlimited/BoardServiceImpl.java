@@ -77,7 +77,7 @@ public class BoardServiceImpl implements BoardService {
         List<BoardDTO> result = new ArrayList<>();
         for (Board child : children) {
             BoardDTO childDTO = child.toDTO();
-            childDTO.setChildren(findChildren(childDTO)); // 자식 노드의 자식 노드를 재귀적으로 찾음
+            childDTO.setChildren(findChildren(childDTO)); // 자식객체가 있으면 재귀호출
             result.add(childDTO);
         }
         return result;
@@ -85,9 +85,14 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public void createChild(Long id, Board board, Board parent) {
+        //부모 게시글 받아오기
         Board parentBoard = boardRepository.findById(parent.getId()).orElse(null);
+        //깊이는 자식 계층이므로 부모의 깊이 +1
         Long depth1 = parentBoard.getDepth() + 1;
+        //계층형 게시판 구현을 위해 바로 위의 부모객체 id값 저장
         Long upparent = boardRepository.findById(parent.getId()).get().getId();
+        //다답글 구현하기 위해 필요함
+        //
         if (parentBoard.getParent() != null) {
             parentBoard = parentBoard.getParent();
         } else {

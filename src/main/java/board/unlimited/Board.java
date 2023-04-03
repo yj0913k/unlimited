@@ -27,9 +27,10 @@ public class Board {
     @JoinColumn(name = "parent_id")
     private Board parent;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL)
     private List<Board> children = new ArrayList<>();
     private Long depth;
+    //바로 위 부모객체의 id값
     private Long upparent;
 
     public BoardDTO toDTO() {
@@ -43,18 +44,4 @@ public class Board {
 
     }
 
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Board board = (Board) o;
-        return getId() != null && Objects.equals(getId(), board.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

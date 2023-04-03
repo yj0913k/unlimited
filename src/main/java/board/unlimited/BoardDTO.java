@@ -23,21 +23,7 @@ public class BoardDTO {
     private Long depth;
     private Long upparent;
 
-    public static BoardDTO of(Board board) {
-        BoardDTO boardDTO = new BoardDTO();
-        boardDTO.setId(board.getId());
-        boardDTO.setTitle(board.getTitle());
-        boardDTO.setContent(board.getContent());
-        if (board.getParent() != null) {
-            boardDTO.setParent(board.getParent().toDTO());
-            boardDTO.setUpparent(board.getParent().getId());
-        }
-        if (board.getChildren() != null) {
-            boardDTO.setChildren(board.getChildren().stream().map(Board::toDTO).collect(Collectors.toList()));
-        }
-        boardDTO.setDepth(board.getDepth());
-        return boardDTO;
-    }
+
 
     public void setChildren(List<BoardDTO> children) {
         this.children = children;

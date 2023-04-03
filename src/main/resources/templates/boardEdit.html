@@ -44,6 +44,8 @@
 
     <h2>board Form</h2>
 
+
+<!--   수정하기-->
     <form name="form" id="form" role="form"
           th:action="@{'/board/edit/' + ${board.id}}" th:method="post">
 
@@ -52,7 +54,7 @@
         <label for="title">제목</label>
 
         <input type="text" class="form-control" name="title" id="title" placeholder="제목을 입력해 주세요">
-        <input type="hidden" th:text="${board.parent}" id="parent" name="parent">
+<!--        <input type="hidden" th:text="${board.parent}" id="parent" name="parent">-->
       </div>
 
       <div class="mb-3">
@@ -67,6 +69,7 @@
       <div>
 
         <button type="submit" class="btn btn-sm btn-primary" id="btnSave">저장</button>
+
       </div>
     </form>
 
