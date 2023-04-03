@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+
 
 <head>
 
@@ -41,18 +44,27 @@
 
 <article>
 
-    <div class="container" role="main">
+    <div class="container" role="main" th:object="${board}">
 
         <h2>board Form</h2>
 
-        <form name="form" id="form" role="form" method="post" action="/board/register">
+        <form name="form" id="form" role="form"  method="post" action="/board/register">
 
-            <div class="mb-3">
+          <!--  <div class="mb-3">
 
                 <label for="title">제목</label>
 
                 <input type="text" class="form-control" name="title" id="title" placeholder="제목을 입력해 주세요">
+&lt;!&ndash;                에러필드 시도중&ndash;&gt;
+&lt;!&ndash;                <div class = "field-error" th:errors="*{title}"></div>&ndash;&gt;
+            </div>-->
+            <div class="mb-3">
+                <label >제목</label>
+                <input type="text" id="title" th:field="*{title}" placeholder="제목을 입력해 주세요"
+                      th:errorclass="field-error" class="form-control">
+                <div class="field-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">제목 오류</div>
             </div>
+
 
             <div class="mb-3">
 

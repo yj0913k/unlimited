@@ -10,9 +10,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +36,45 @@ public class BoardController {
 
     @Autowired
     BoardService boardService;
+
+    /*
+   게시글 작성 이동
+    */
+    @GetMapping("/board/register")
+    public String boardRegister(Model model) {
+        model.addAttribute("board", new Board());
+        return "boardRegister";
+    }
+
+    /*
+    게시글 등록
+    계층형 쿼리 시작  30. 10:00AM
+     */
+
+    @PostMapping("/board/register")
+    public String createBoard(@Validated @ModelAttribute Board board, BindingResult bindingResult) {
+        /*
+         *게시글 등록. 최상위 계층이며 children 에 배열 생성.
+         * 깊이는 0
+         */
+        if(board.getTitle() ==null ||board.getTitle().length()>20){
+            bindingResult.addError(new FieldError("board", "title", "1~20 입력요망"));
+        }
+
+        if(bindingResult.hasErrors()){
+            log.info("errors={}", bindingResult);
+            return "boardRegister";
+        }
+
+        Board board1 = Board.builder()
+                .title(board.getTitle())
+                .content(board.getContent())
+                .children(new ArrayList<>())
+                .depth(0L) // 최상위 게시글이므로 깊이는 0으로 설정
+                .build();
+        boardRepository.save(board1);
+        return "redirect:/";
+    }
 
     /*
     게시글 상세페이지 이동
@@ -94,35 +137,7 @@ public class BoardController {
 
 
 
-    /*
-    게시글 작성 이동
-     */
-    @GetMapping("/board/register")
-    public String boardRegister() {
 
-        return "boardRegister";
-    }
-
-    /*
-    게시글 등록
-    계층형 쿼리 시작  30. 10:00AM
-     */
-
-    @PostMapping("/board/register")
-    public String createBoard(String title, String content) {
-        /*
-        *게시글 등록. 최상위 계층이며 children 에 배열 생성.
-        * 깊이는 0
-         */
-        Board board = Board.builder()
-                .title(title)
-                .content(content)
-                .children(new ArrayList<>())
-                .depth(0L) // 최상위 게시글이므로 깊이는 0으로 설정
-                .build();
-        boardRepository.save(board);
-        return "redirect:/";
-    }
 
 
     /*

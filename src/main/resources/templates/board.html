@@ -16,6 +16,12 @@
             display: none;
         }
     </style>
+    <script type="text/javascript">
+        function btnRegisterClicked() {
+            location.href='/board/register';
+        }
+
+    </script>
 
 
 </head>
@@ -32,9 +38,9 @@
         crossorigin="anonymous"></script>
 <div class="container">
     <h2>Basic Table</h2>
-    <form action="/board/register" method="get">
-        <button>게시글 작성</button>
-    </form>
+<!--    <form action="/board/register" method="get">-->
+        <button type="button" onclick="btnRegisterClicked()">게시글 작성</button>
+<!--    </form>-->
 
 
     <table border="1px solid black">
