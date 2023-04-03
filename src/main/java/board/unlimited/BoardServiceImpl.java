@@ -23,8 +23,6 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
 
-
-
     @Override
     public BoardDTO detail(Long id) {
         Optional<Board> optionalBoard = boardRepository.findById(id);

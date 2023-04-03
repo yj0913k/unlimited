@@ -66,11 +66,11 @@
                 <label for="content">Content:</label>
                 <textarea id="content" name="content" rows="5" required th:text="${board.content}"></textarea>
             </div>
-            <button type="submit">Submit</button>
+            <button type="submit">등록</button>
         </form>
 
 
-        <form action="/board" method="post">
+        <form action="/" method="get">
             <div>
                 <button type="submit" class="btn btn-sm btn-primary" id="btnList">목록</button>
             </div>
