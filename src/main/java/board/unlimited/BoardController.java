@@ -59,8 +59,6 @@ public class BoardController {
             boardDTO.setChildren(boardService.findChildren(boardDTO));
             boardDTOList.add(boardDTO);
         });
-
-
         boardDTOList.forEach(boardDTO -> {
             List<BoardDTO> children = boardRepository.findAll().stream()
                     .filter(child -> child.getParent() != null && child.getParent().getId().equals(boardDTO.getId()))
@@ -68,14 +66,13 @@ public class BoardController {
                     .collect(Collectors.toList());
             boardDTO.setChildren(children);
         });
-
         model.addAttribute("boardDTOList", boardDTOList);
         model.addAttribute("currentPage", pageNum);
-        model.addAttribute("totalPages", boardPage.getTotalPages());
+        model.addAttribute("totalPages", boardPage.getTotalPages()-1);
         int startPage = Math.max(1, boardPage.getPageable().getPageNumber() - 1);
-        int endPage = Math.min(boardPage.getTotalPages(), boardPage.getPageable().getPageNumber() + 3);
+        int endPage = Math.min(boardPage.getTotalPages()-1, boardPage.getPageable().getPageNumber() + 3);
         boolean hasPrevious = startPage > 1;
-        boolean hasNext = endPage < boardPage.getTotalPages();
+        boolean hasNext = endPage < boardPage.getTotalPages()-1;
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         model.addAttribute("hasPrevious", hasPrevious);
